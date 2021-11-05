@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-setup(name='pygcn',
+setup(name='src',
       version='0.1',
       description='Graph Convolutional Networks in PyTorch',
       author='Thomas Kipf',
@@ -11,7 +11,8 @@ setup(name='pygcn',
       license='MIT',
       install_requires=['numpy',
                         'torch',
-                        'scipy'
+                        'scipy',
+                        'tqdm'
                         ],
-      package_data={'pygcn': ['README.md']},
+      package_data={'src': ['README.md']},
       packages=find_packages())
