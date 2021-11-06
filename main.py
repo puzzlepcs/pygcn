@@ -1,4 +1,5 @@
-# main.py - LightGCN model
+# main.py - Semi-supervised node classfication
+
 import os, inspect
 from time import time
 import numpy as np
@@ -10,10 +11,10 @@ import torch.optim as optim
 
 from config.config import config
 from data.data_helper import BasicDataset
-from src.models import MyLightGCN
+from src.models import BasicModel, MyLightGCN, MyGCN
 from src.utils import accuracy, sample_negatives
 
-def train(model: MyLightGCN, optimizer: optim.Adam, dataset: BasicDataset):
+def train(model: BasicModel, optimizer: optim.Adam, dataset: BasicDataset):
     Y = dataset.getLabels().to(config["device"])
     train_idx = dataset.train_idx
 
@@ -43,7 +44,7 @@ def train(model: MyLightGCN, optimizer: optim.Adam, dataset: BasicDataset):
     return train_time
 
 
-def test(model, dataset):
+def test(model: BasicModel, dataset):
     Y = dataset.getLabels().to(config["device"])
 
     model.eval()
@@ -70,9 +71,12 @@ if config['cuda']: torch.cuda.manual_seed(config['seed'])
 # Load data
 dataset = BasicDataset(config)
 
-
-# LightGCN model
-model = MyLightGCN(config=config, dataset=dataset)
+if config['gcn_type'] == 'gcn':
+    # GCN model
+    model = MyGCN(config=config, dataset=dataset)
+else:
+    # LightGCN model
+    model = MyLightGCN(config=config, dataset=dataset)
 
 
 # Optimizer
