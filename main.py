@@ -73,9 +73,11 @@ dataset = BasicDataset(config)
 
 if config['gcn_type'] == 'gcn':
     # GCN model
+    print("Aggregator: GCN")
     model = MyGCN(config=config, dataset=dataset)
 else:
     # LightGCN model
+    print("Aggregator: LightGCN")
     model = MyLightGCN(config=config, dataset=dataset)
 
 
