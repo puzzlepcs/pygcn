@@ -35,7 +35,7 @@ def train(model: BasicModel, optimizer: optim.Adam, dataset: BasicDataset):
 
         negatives = sample_negatives(dataset, config['num_negatives']).to(config["device"])
         topology_loss = model.topology_loss(negatives)
-        loss = config["lambda"] * classification_loss + topology_loss
+        loss = config["lambda"] * classification_loss + (1-config["lambda"]) * topology_loss
 
         loss.backward()
         optimizer.step()
