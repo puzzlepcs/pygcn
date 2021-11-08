@@ -14,6 +14,9 @@ from data.data_helper import BasicDataset
 from src.models import BasicModel, MyLightGCN, MyGCN
 from src.utils import accuracy, sample_negatives
 
+import warnings
+warnings.filterwarnings("ignore")
+
 def train(model: BasicModel, optimizer: optim.Adam, dataset: BasicDataset):
     Y = dataset.getLabels().to(config["device"])
     train_idx = dataset.train_idx
