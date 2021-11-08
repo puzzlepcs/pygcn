@@ -1,2 +1,12 @@
 
 *.pyc
+*.content
+*.emb
+*.npz
+*.cites
+*.sh
+*.txt
+*.c
+*.cpp
+*.hpp
+Makefile
