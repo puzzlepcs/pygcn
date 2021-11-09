@@ -228,30 +228,25 @@ def sample_negatives(dataset: BasicDataset, num_negatives: int):
     return s
 
 
-def sample_negatives_(dataset:BasicDataset, num_negatives):
-    inc_mat = torch.transpose(dataset.getIncidenceMatrix(), 0, 1).to_dense()
-    # inc_mat = torch.transpose(dataset.getIncidenceMatrix(), 0, 1)
+def sample_negatives_(dataset: BasicDataset, num_negatives: int, device):
+    inc_mat = torch.transpose(dataset.getIncidenceMatrix(), 0, 1).to(device=device)
     n, m = dataset.n_nodes, dataset.m_hyperedges
-
-    mask = torch.ones(m, n) - inc_mat
-    random = torch.randn(m, n)
-    # random = torch.mm(mask, random.T)
-    random = torch.where(inc_mat == 0, random, 0)
-    # random.mask(mask)
 
     sources, targets = [], []
     values = []
 
     for idx in range(m):
-        # neighbors = inc_mat[idx]._indices()[0, :]
-        neighbors = inc_mat[idx].nonzero()[1]
+        neighbors = inc_mat[idx]._indices()[0, :]
         num_negatives_per_node = len(neighbors) * num_negatives
 
-        random_vector = random[idx]
+        mask = torch.ones(n, device=device) - inc_mat[idx]
+
+        random_vector = torch.rand(n, device=device)
+        random_vector = random_vector * mask
 
         # pick num_negative_per_node elements with largest values
         negatives = torch.topk(random_vector, num_negatives_per_node, largest=True).indices
-        negatives = negatives.numpy()
+        negatives = negatives.cpu().numpy()
 
         assert num_negatives_per_node == len(negatives)
 
@@ -259,7 +254,7 @@ def sample_negatives_(dataset:BasicDataset, num_negatives):
         sources.extend([idx] * num_negatives_per_node)
         values.extend([1.0] * num_negatives_per_node)
 
-    s = torch.sparse_coo_tensor(indices=(sources, targets), values=values, size=(m, n))
+    s = torch.sparse_coo_tensor(indices=(sources, targets), values=values, size=(m, n), device=device)
     return s
 
 
