@@ -21,7 +21,7 @@ model related parameters
 '''
 # tuple = 'min'
 # skip_connection = True
-gcn_type = 'gcn'
+use_light = True
 layers = 2
 epochs = 200
 latent_dim = 16
@@ -79,7 +79,7 @@ parser.add_argument('--lambda', type=float, default=lambda_)
 # parser.add_argument('--skip_connection', type=bool, default=skip_connection)
 parser.add_argument('--num-negatives', type=int, default=5)
 parser.add_argument('--num-layers', type=int, default=layers)
-parser.add_argument('--gcn-type', type=str, default=gcn_type)
+parser.add_argument('--use-light', action='store_true', default=False)
 
 
 args = parser.parse_args()

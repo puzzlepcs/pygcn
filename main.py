@@ -12,7 +12,7 @@ import torch.optim as optim
 from config.config import config
 from data.data_helper import BasicDataset
 from src.models import BasicModel, MyLightGCN, MyGCN
-from src.utils import accuracy, sample_negatives
+from src.utils import accuracy, sample_negatives_
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -35,7 +35,7 @@ def train(model: BasicModel, optimizer: optim.Adam, dataset: BasicDataset):
         loss = config["lambda"] * classification_loss
 
         if config["lambda"] < 1:
-            negatives = sample_negatives(dataset, config['num_negatives']).to(config["device"])
+            negatives = sample_negatives_(dataset, config['num_negatives'], config["device"])
             topology_loss = model.topology_loss(negatives)
             loss += (1-config["lambda"]) * topology_loss
 
@@ -74,14 +74,14 @@ if config['cuda']: torch.cuda.manual_seed(config['seed'])
 # Load data
 dataset = BasicDataset(config)
 
-if config['gcn_type'] == 'gcn':
-    # GCN model
-    print("Aggregator: GCN")
-    model = MyGCN(config=config, dataset=dataset)
-else:
+if config['use_light']:
     # LightGCN model
     print("Aggregator: LightGCN")
     model = MyLightGCN(config=config, dataset=dataset)
+else:
+    # GCN model
+    print("Aggregator: GCN")
+    model = MyGCN(config=config, dataset=dataset)
 
 
 # Optimizer
