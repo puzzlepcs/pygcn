@@ -32,10 +32,12 @@ def train(model: BasicModel, optimizer: optim.Adam, dataset: BasicDataset):
 
         classification_loss = F.nll_loss(Z[train_idx], Y[train_idx])
         # acc = accuracy(output=Z[train_idx], labels=Y[train_idx])
+        loss = config["lambda"] * classification_loss
 
-        negatives = sample_negatives(dataset, config['num_negatives']).to(config["device"])
-        topology_loss = model.topology_loss(negatives)
-        loss = config["lambda"] * classification_loss + (1-config["lambda"]) * topology_loss
+        if config["lambda"] < 1:
+            negatives = sample_negatives(dataset, config['num_negatives']).to(config["device"])
+            topology_loss = model.topology_loss(negatives)
+            loss += (1-config["lambda"]) * topology_loss
 
         loss.backward()
         optimizer.step()
